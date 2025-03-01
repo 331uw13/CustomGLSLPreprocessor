@@ -17,7 +17,7 @@ int main() {
     size_t sizeout = 0;
     char* glsl = preproc_glsl(&fragment_file, &sizeout);
     printf("-----\n\033[90m%s\n\033[0m-----\n", glsl);
-    printf("\033[32m'preproc_glsl' returned: %p, %li\033[0m\n", glsl, sizeout);
+    printf("\033[32m'preproc_glsl' returned: %p, %li\033[0m\n", glsl, &sizeout);
 
     // -> Here you could compile and link the shader programs
     // ...
