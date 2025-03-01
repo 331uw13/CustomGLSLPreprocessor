@@ -80,8 +80,6 @@ void close_file(struct file_t* file) {
     }
 
     free(file->data);
-
-    printf("closed file.\n");
 }
 
 
@@ -107,7 +105,7 @@ static char* copypaste_content(
     memset(new_data, 0, new_size);
 
     // Copy eveything at the begining of data until 'index' (where "#include" was found).
-
+    
     memmove(
             new_data,
             code,
@@ -143,24 +141,6 @@ error:
 #define INCLUDETAG "#include"
 #define PREPROC_TMPBUF_SIZE 64
 
-/*
-
-
-
-    struct file_t file = { .data = NULL, .size = 0 };
-    if(!read_file(&file, "res/shaders/blabla.fs")) {
-        // Handle error.
-    }
-
-    char* fragment_glsl = preproc_glsl(file);
-    if(!fragment_glsl) {
-        // Handle error.
-    }
-
-
-
-
-*/
 
 char* preproc_glsl(struct file_t* file, size_t* size_out) {
 
@@ -286,7 +266,6 @@ discard_tmpbuf:
                 goto error;
             }
         }
-
     }
 
 error:
