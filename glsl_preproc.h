@@ -1,6 +1,8 @@
 #ifndef CUSTOM_GLSL_PREPROCESSOR_H
 #define CUSTOM_GLSL_PREPROCESSOR_H
 
+// https://github.com/331uw13/CustomGLSLPreprocessor
+
 #include <stddef.h>
 
 #define FILEOK 1

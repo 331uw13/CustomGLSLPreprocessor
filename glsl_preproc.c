@@ -9,6 +9,7 @@
 
 #include "glsl_preproc.h"
 
+// https://github.com/331uw13/CustomGLSLPreprocessor
 
 
 int read_file(struct file_t* file, const char* filename) {
