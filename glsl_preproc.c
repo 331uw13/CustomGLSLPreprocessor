@@ -181,7 +181,7 @@ char* preproc_glsl(struct file_t* file, size_t* size_out) {
     size_t tmpbuf_i = 0;
     size_t includetag_index = 0; // Where "#include" was found
     int reading_totmp = 0;       // When copy into 'tmpbuf'
-    int include_tag_found = 0;
+    int includetag_found = 0;
     int num_quatation_marks = 0; // Used to detect where '#include ("this is")'
     int lines = 0;  // How many newline characters
 
@@ -190,7 +190,7 @@ char* preproc_glsl(struct file_t* file, size_t* size_out) {
 
         // Read from file data into 'tmpbuf' when "#" is found
         // until 'tmpbuf' matches "#include".
-        if(!include_tag_found) {
+        if(!includetag_found) {
             if(c == '\n') {
                 // Keep track of lines if errors occur.
                 lines++;
@@ -220,7 +220,7 @@ discard_tmpbuf:
                 tmpbuf_i++;
             
                 if(strcmp(tmpbuf, INCLUDETAG) == 0) {
-                    include_tag_found = 1;
+                    includetag_found = 1;
                     memset(tmpbuf, 0, PREPROC_TMPBUF_SIZE);
                     tmpbuf_i = 0;
                     num_quatation_marks = 0;
@@ -246,11 +246,8 @@ discard_tmpbuf:
             // Another " character was found. try to read the file content
             // and copy paste it in.
 
-            printf("TAG: %s\n", tmpbuf);
-           
-
-            struct file_t included_file = { .data = NULL, .size = 0, .ok = 0 };
-            if(!read_file(&included_file, tmpbuf)) {
+            struct file_t include_file = { .data = NULL, .size = 0, .ok = 0 };
+            if(!read_file(&include_file, tmpbuf)) {
                 goto error;
             }
 
@@ -259,7 +256,7 @@ discard_tmpbuf:
                     &code_size, // Report back the size too.
                     includetag_index, // Where #include "..." begins
                     i+1,            // Where #include "..." ends  +1 for last quatation mark.
-                    &included_file
+                    &include_file
                     );
             if(!ptr) {
                 goto error;
@@ -268,16 +265,11 @@ discard_tmpbuf:
             free(code);
             code = ptr;
 
-            /*
-            int res = copynpaste_filecontent(file, i, &included_file);
-            close_file(&included_file);
- 
-            if(!res) {
-                goto error;
-            }
-            */
+            i -= includetag_index;
 
-            include_tag_found = 0;
+            close_file(&include_file);
+    
+            includetag_found = 0;
             reading_totmp = 0;
             memset(tmpbuf, 0, PREPROC_TMPBUF_SIZE);
             tmpbuf_i = 0;
