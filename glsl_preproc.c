@@ -53,11 +53,13 @@ int read_file(struct file_t* file, const char* filename) {
 
 
     file->data = NULL;
-    file->data = malloc(sb.st_size);
+    file->data = malloc(sb.st_size+1);
+    memset(file->data, 0, sb.st_size+1);
     memmove(file->data, ptr, sb.st_size);
 
     file->size = sb.st_size;
     file->ok = FILEOK;
+    
 
     result = 1;
 
@@ -105,7 +107,7 @@ static char* copypaste_content(
     memset(new_data, 0, new_size);
 
     // Copy eveything at the begining of data until 'index' (where "#include" was found).
-    
+
     memmove(
             new_data,
             code,
@@ -126,10 +128,9 @@ static char* copypaste_content(
     memmove(
             new_data + (includetag_index + include_file->size),
             code + includetag_end_index,
-            *code_size - includetag_index
+            *code_size - includetag_end_index
             );
 
-    printf("\033[90m%s\033[0m\n", code);
 
     *code_size += include_file->size;
 
@@ -165,6 +166,8 @@ char* preproc_glsl(struct file_t* file, size_t* size_out) {
     int includetag_found = 0;
     int num_quatation_marks = 0; // Used to detect where '#include ("this is")'
     int lines = 0;  // How many newline characters
+
+    int asd = 0;
 
     for(size_t i = 0; i < code_size; i++) {
         char c = code[i];
@@ -243,6 +246,7 @@ discard_tmpbuf:
                 goto error;
             }
 
+            asd++;
             free(code);
             code = ptr;
 
