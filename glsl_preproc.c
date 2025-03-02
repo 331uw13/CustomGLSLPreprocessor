@@ -63,7 +63,7 @@ int read_file(struct file_t* file, const char* filename) {
 
     result = 1;
 
-    munmap(file->data, file->size);
+    munmap(ptr, file->size);
 
 error_and_close:
     close(fd);
@@ -167,8 +167,6 @@ char* preproc_glsl(struct file_t* file, size_t* size_out) {
     int num_quatation_marks = 0; // Used to detect where '#include ("this is")'
     int lines = 0;  // How many newline characters
 
-    int asd = 0;
-
     for(size_t i = 0; i < code_size; i++) {
         char c = code[i];
 
@@ -227,6 +225,7 @@ discard_tmpbuf:
             }            
 
 
+            printf("-> Found potential filepath '%s'\n", tmpbuf);
             // Another " character was found. try to read the file content
             // and copy paste it in.
 
@@ -234,6 +233,8 @@ discard_tmpbuf:
             if(!read_file(&include_file, tmpbuf)) {
                 goto error;
             }
+
+            printf("   `-> Read Ok.");
 
             char* ptr = copypaste_content(
                     code,       // Current code.
@@ -246,7 +247,8 @@ discard_tmpbuf:
                 goto error;
             }
 
-            asd++;
+            printf("   `-> Copy paste Ok.");
+
             free(code);
             code = ptr;
 
