@@ -57,13 +57,15 @@ int read_file(struct file_t* file, const char* filename) {
     memset(file->data, 0, sb.st_size+1);
     memmove(file->data, ptr, sb.st_size);
 
+
+    printf("\033[90m%s\033[0m\n", file->data);
+
     file->size = sb.st_size;
     file->ok = FILEOK;
     
 
     result = 1;
-
-    munmap(ptr, file->size);
+    munmap(ptr, sb.st_size);
 
 error_and_close:
     close(fd);
@@ -225,7 +227,6 @@ discard_tmpbuf:
             }            
 
 
-            printf("-> Found potential filepath '%s'\n", tmpbuf);
             // Another " character was found. try to read the file content
             // and copy paste it in.
 
@@ -234,7 +235,6 @@ discard_tmpbuf:
                 goto error;
             }
 
-            printf("   `-> Read Ok.");
 
             char* ptr = copypaste_content(
                     code,       // Current code.
@@ -247,7 +247,6 @@ discard_tmpbuf:
                 goto error;
             }
 
-            printf("   `-> Copy paste Ok.");
 
             free(code);
             code = ptr;
@@ -273,6 +272,8 @@ discard_tmpbuf:
             }
         }
     }
+
+    code[code_size-1] = '\0';
 
 error:
     return code;
